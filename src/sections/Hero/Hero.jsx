@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef } from 'react';
+import { Component, lazy, Suspense, useRef, useState } from 'react';
 import Button from '../../components/Button.jsx';
 import { DateIndicator, InfoItem, SectionLabel } from '../../components/EventMeta.jsx';
 import usePointerParallax from '../../hooks/usePointerParallax.js';
@@ -16,17 +16,40 @@ const HeroCanvas = lazy(() => import('./three/HeroCanvas.jsx'));
  * an empty slot in the layout — the same box the 2D scene uses — tells the camera where the
  * composition belongs (see ViewFit in three/HeroCanvas.jsx).
  */
-function Canvas3D({ slot, reduced, onStart }) {
+function Canvas3D({ slot, reduced, onStart, onFail }) {
   return (
     <div className="hero__canvas" aria-hidden="true">
-      <Suspense fallback={null}>
-        <HeroCanvas slot={slot} reduced={reduced} onStart={onStart} />
-      </Suspense>
+      <SceneBoundary onFail={onFail}>
+        <Suspense fallback={null}>
+          <HeroCanvas slot={slot} reduced={reduced} onStart={onStart} />
+        </Suspense>
+      </SceneBoundary>
     </div>
   );
 }
 
-export default function Hero({ webgl, reduced, onSceneStart }) {
+/** If anything in the 3D scene throws (a texture fails to load, WebGL context lost…), fall back
+ *  to the 2D scene instead of leaving a black hero. */
+class SceneBoundary extends Component {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error) {
+    console.error('[hero] 3D scene failed, using the 2D scene:', error);
+    this.props.onFail();
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+export default function Hero({ webgl: webglSupported, reduced, onSceneStart }) {
+  const [failed, setFailed] = useState(false);
+  const webgl = webglSupported && !failed;
   const ref = useRef(null);
   const slot = useRef(null);
   usePointerParallax(ref);
@@ -39,7 +62,17 @@ export default function Hero({ webgl, reduced, onSceneStart }) {
           <Smoke layer="back" />
         </div>
       )}
-      {webgl && <Canvas3D slot={slot} reduced={reduced} onStart={onSceneStart} />}
+      {webgl && (
+        <Canvas3D
+          slot={slot}
+          reduced={reduced}
+          onStart={onSceneStart}
+          onFail={() => {
+            setFailed(true);
+            onSceneStart();
+          }}
+        />
+      )}
 
       <div className="hero__layout container">
         <div className="hero__intro">

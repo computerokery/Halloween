@@ -15,7 +15,13 @@ if (typeof window !== 'undefined') {
 }
 
 const files = import.meta.glob('../../../assets/hero3d/*.{webp,png}', { eager: true, query: '?url', import: 'default' });
-export const assetUrl = (name) => files[`../../../assets/hero3d/${name}`];
+/** URL of a bundled hero asset. Throws if it is missing — a silent `undefined` would make some
+ *  helpers (e.g. drei <Clouds>) fall back to remote default textures. */
+export const assetUrl = (name) => {
+  const url = files[`../../../assets/hero3d/${name}`];
+  if (!url) throw new Error(`Missing hero asset: ${name} (run python tools/build_3d_assets.py)`);
+  return url;
+};
 
 export const smoothstep = THREE.MathUtils.smoothstep;
 export const damp = THREE.MathUtils.damp;

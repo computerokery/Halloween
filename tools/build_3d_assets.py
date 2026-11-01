@@ -134,6 +134,22 @@ def export(name, bgr, alpha, glow=None, depth=(0.55, 0.035)):
     return box, [int(w), int(h)]
 
 
+def smoke_texture(size=256, seed=7):
+    """Soft noise puff used by the drifting floor smoke (drei <Clouds>)."""
+    rng = np.random.default_rng(seed)
+    noise = np.zeros((size, size), np.float32)
+    for octave in range(5):
+        n = 4 * 2 ** octave
+        layer = cv2.resize(rng.random((n, n)).astype(np.float32), (size, size), interpolation=cv2.INTER_CUBIC)
+        noise += layer / 2 ** octave
+    noise = (noise - noise.min()) / (noise.max() - noise.min())
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32) / size - 0.5
+    blob = np.clip(1 - np.sqrt(xx ** 2 + yy ** 2) / 0.5, 0, 1) ** 1.6
+    a = np.clip(blob * (0.35 + 0.9 * noise) - 0.05, 0, 1)
+    rgba = np.dstack([np.full((size, size, 3), 255, np.uint8), (a * 255).astype(np.uint8)])
+    cv2.imwrite(str(OUT / "smoke.png"), rgba)
+
+
 # ---- assets -------------------------------------------------------------------------------
 
 def main():
@@ -206,6 +222,7 @@ def main():
         _, size = export(name, bgr[y0:y1, x0:x1], la, depth=(0.5, 0.05))
         m[name] = {"size": size}
 
+    smoke_texture()
     (OUT / "manifest.json").write_text(json.dumps(m, indent=2))
     print("wrote manifest.json")
 
