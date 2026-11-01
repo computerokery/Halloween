@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Header from './components/Header.jsx';
 import Hero from './sections/Hero/Hero.jsx';
 import { CRITICAL_IMAGES } from './sections/Hero/HeroScene.jsx';
@@ -6,6 +6,12 @@ import { TEXT_CUE, TEXT_CUE_2D } from './sections/Hero/three/timing.js';
 import useIntro from './hooks/useIntro.js';
 import useIntroText from './hooks/useIntroText.js';
 import useHeroScroll from './hooks/useHeroScroll.js';
+import Whisper from './features/summon/Whisper.jsx';
+import { loadPass, readSummoner } from './features/summon/storage.js';
+
+// the Midnight Pass ritual loads on first use
+const Summon = lazy(() => import('./features/summon/Summon.jsx'));
+const SUMMON_LINKS = 'a[href="#tickets"]';
 
 function hasWebGL() {
   try {
@@ -38,6 +44,28 @@ export default function App() {
 
   const onSceneStart = useCallback(() => setTextCue((c) => c ?? { delay: reduced ? 0 : TEXT_CUE }), [reduced]);
 
+  // ?from=Name — someone sent this visitor their invite link
+  const [summoner] = useState(() => {
+    const from = readSummoner();
+    if (from) window.history.replaceState(null, '', window.location.pathname + window.location.hash);
+    return loadPass() ? null : from;
+  });
+  const [summon, setSummon] = useState({ mounted: false, open: false });
+  const openSummon = useCallback(() => setSummon({ mounted: true, open: true }), []);
+  const closeSummon = useCallback(() => setSummon((s) => ({ ...s, open: false })), []);
+
+  // every ticket CTA (header, hero, scroll finale) opens the ritual
+  useEffect(() => {
+    const onClick = (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (!e.target.closest?.(SUMMON_LINKS)) return;
+      e.preventDefault();
+      openSummon();
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [openSummon]);
+
   useIntroText(page, textCue);
   useHeroScroll(page, webgl);
 
@@ -50,6 +78,12 @@ export default function App() {
       <main id="main">
         <Hero webgl={webgl} reduced={reduced} onSceneStart={onSceneStart} />
       </main>
+      {!summon.mounted && <Whisper from={summoner} ready={Boolean(textCue)} onAnswer={openSummon} />}
+      {summon.mounted && (
+        <Suspense fallback={null}>
+          <Summon open={summon.open} from={summoner} onClose={closeSummon} />
+        </Suspense>
+      )}
     </div>
   );
 }

@@ -87,7 +87,9 @@ export default function HeroCanvas({ slot, reduced, onStart }) {
   const [cues, setCues] = useState(null);
   const [visible, setVisible] = useState(true);
   const [quality, setQuality] = useState(() => (window.innerWidth < 768 ? 'low' : 'high'));
-  const [dpr, setDpr] = useState(() => Math.min(1.75, window.devicePixelRatio || 1));
+  // dev only: /?record renders at the full device pixel ratio with no quality step-down (demo video)
+  const [recording] = useState(() => import.meta.env.DEV && new URLSearchParams(window.location.search).has('record'));
+  const [dpr, setDpr] = useState(() => (recording ? window.devicePixelRatio : Math.min(1.75, window.devicePixelRatio || 1)));
 
   useEffect(() => {
     let alive = true;
@@ -113,12 +115,14 @@ export default function HeroCanvas({ slot, reduced, onStart }) {
         camera={{ fov: FOV, near: 0.1, far: 80, position: CAMERA_FINAL }}
       >
         <ViewFit slot={slot} />
-        <PerformanceMonitor
-          onDecline={() => {
-            setDpr(1);
-            setQuality('low');
-          }}
-        />
+        {!recording && (
+          <PerformanceMonitor
+            onDecline={() => {
+              setDpr(1);
+              setQuality('low');
+            }}
+          />
+        )}
         {cues && (
           <Suspense fallback={null}>
             <World cues={cues} quality={quality} reduced={reduced} />
