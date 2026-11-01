@@ -121,14 +121,19 @@ def rect_uv(r, box):
     return [a[0], a[1], b[0], b[1]]  # minU, minV, maxU, maxV
 
 
-def export(name, bgr, alpha, glow=None, depth=(0.55, 0.035)):
+def export(name, bgr, alpha, glow=None, depth=(0.55, 0.035), carve=0.0):
     box = bbox(alpha)
     x0, y0, x1, y1 = box
     c, a = bgr[y0:y1, x0:x1], alpha[y0:y1, x0:x1]
     save_rgba(OUT / f"{name}.webp", c, a)
     w, h = x1 - x0, y1 - y0
-    save_gray(OUT / f"{name}-depth.png", depth_map(a, *depth), (max(64, w // 3), max(64, h // 3)))
     g = glow[y0:y1, x0:x1] if glow is not None else np.zeros_like(a)
+    d = depth_map(a, *depth)
+    if carve:
+        # carved openings are holes: push them back, with a soft wall around each cut
+        hole = cv2.GaussianBlur(np.clip(g * 2.5, 0, 1), (0, 0), 0.008 * max(a.shape))
+        d = np.clip(d - hole * carve, 0, 1)
+    save_gray(OUT / f"{name}-depth.png", d, (max(64, w // 3), max(64, h // 3)))
     save_gray(OUT / f"{name}-glow.png", g, (max(16, w // 2), max(16, h // 2)))
     print(f"{name}: {w}x{h}")
     return box, [int(w), int(h)]
@@ -160,7 +165,7 @@ def main():
 
     bgr, a = load(PUMPKIN["file"])
     # low saturation floor: the near-white hotspot of the inner candle is light too
-    box, size = export("pumpkin", bgr, a, glow_map(bgr, a, PUMPKIN["glow_boxes"], v0=0.74, s0=0.0))
+    box, size = export("pumpkin", bgr, a, glow_map(bgr, a, PUMPKIN["glow_boxes"], v0=0.74, s0=0.0), carve=0.25)
     ys = np.nonzero(a.max(1) > 0.5)[0]
     bx0, bx1 = PUMPKIN["body_x"]
     m["pumpkin"] = {

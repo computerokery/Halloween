@@ -61,18 +61,22 @@ export function FallingLeaves({ cues, count }) {
     });
   }, [count]);
 
-  useFrame(({ clock }) => {
+  const vortex = useRef(0);
+
+  useFrame(({ clock }, delta) => {
     const t = clock.elapsedTime;
     const v = cues.atmosphere.value.leaves;
     const swirl = cues.scrollFx.value.swirl;
+    // the vortex angle accumulates over time (slowly), so scrolling never makes it jump
+    vortex.current += Math.min(delta, 0.05) * 0.22 * swirl;
     leaves.forEach((l, i) => {
       const m = refs.current[i];
       if (!m) return;
       // steady state: falling loop
       const fy = TOP - ((t * l.speed + l.phase) % RANGE);
       // while scrolling the fall turns into a slow vortex around the pumpkin
-      const sa = swirl * (t * 0.6 + l.phase);
-      const fx = l.x * Math.cos(sa) - l.z * Math.sin(sa) * swirl + Math.sin(t * 0.55 + l.phase) * l.sway * (1 + swirl);
+      const sa = vortex.current + swirl * l.phase * 0.3;
+      const fx = l.x * Math.cos(sa) - l.z * Math.sin(sa) * swirl + Math.sin(t * 0.55 + l.phase) * l.sway * (1 + swirl * 0.4);
       const fz = l.z * Math.cos(sa) + l.x * Math.sin(sa) * swirl + Math.cos(t * 0.4 + l.phase) * 0.35;
       // intro: a vortex out of the pumpkin
       const a = l.swirl + v * 7;

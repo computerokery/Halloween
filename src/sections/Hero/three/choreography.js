@@ -7,7 +7,8 @@ import { LENGTH } from './timing.js';
  * The hero intro, as a Theatre.js sequence (seconds).
  *
  *   0.0  darkness, embers; the camera slowly pushes in on a moonlit pumpkin
- *   0.85 the wick sputters (spark), 1.25 light spreads through the carving, glow swells
+ *   0.85 the wick sputters (spark) and smoke curls out of the top; 1.25 the flame takes —
+ *        light spreads through the carving and scatters in the haze, sparks rise on the hot air
  *   1.45 camera pulls back and swings round to the final framing (3.9)
  *   1.9  the main ghost rises out of the pumpkin; 2.2 / 2.4 small ghosts swoop out
  *   2.3  leaves swirl up and start falling; 2.8 candles light
@@ -23,7 +24,8 @@ const TRACKS = {
   Camera: {
     px: [[0, 1.0], [1.45, 0.6], [2.6, 3.2], [3.9, cx]],
     py: [[0, 3.2], [1.45, 2.95], [2.6, 4.3], [3.9, cy]],
-    pz: [[0, 14.2], [1.45, 12.4], [2.6, 15.0], [3.9, cz]],
+    // a small push-in as the flame catches, then the pull-back
+    pz: [[0, 14.2], [1.25, 12.6], [1.55, 11.9, 'out'], [2.6, 15.0], [3.9, cz]],
     tx: [[0, -0.2], [1.45, -0.2], [2.6, 0.4], [3.9, 0]],
     ty: [[0, 2.7], [1.45, 2.55], [2.6, 4.0], [3.9, cy]],
   },
@@ -45,7 +47,11 @@ const TRACKS = {
     embers: [[0, 0.25], [1.6, 0.35], [2.2, 1]],
     leaves: [[2.3, 0], [3.9, 1, 'out']],
     candles: [[2.8, 0], [3.5, 1, 'out']],
-    bloom: [[0, 0.3], [1.2, 0.45], [1.85, 1.7, 'out'], [3.0, 1.1]],
+    bloom: [[0, 0.3], [1.25, 0.45], [1.6, 1.8, 'out'], [2.4, 1.25], [3.0, 1.1]],
+    // the ignition beat (Ignition.jsx)
+    smoke: [[0.8, 0], [3.4, 1, 'linear']],
+    haze: [[1.2, 0], [1.6, 0.22, 'out'], [2.6, 0.12], [3.6, 0.08]],
+    sparks: [[1.15, 0], [3.8, 1, 'linear']],
   },
 };
 
@@ -112,7 +118,7 @@ async function create() {
     }),
     ghosts: sheet.object('Ghosts', { main: num(1, [0, 1]), left: num(1, [0, 1]), right: num(1, [0, 1]) }),
     atmosphere: sheet.object('Atmosphere', {
-      foliage: num(1, [0, 1]), embers: num(1, [0, 1]), leaves: num(1, [0, 1]), candles: num(1, [0, 1]), bloom: num(1.1, [0, 4]),
+      foliage: num(1, [0, 1]), smoke: num(1, [0, 1]), haze: num(0.08, [0, 2]), sparks: num(1, [0, 1]), embers: num(1, [0, 1]), leaves: num(1, [0, 1]), candles: num(1, [0, 1]), bloom: num(1.1, [0, 4]),
     }),
   };
   const scrollSheet = project.sheet('HeroScroll');

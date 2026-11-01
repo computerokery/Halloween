@@ -37,7 +37,7 @@ function faceCamera(obj, camera, amount, delta) {
 
 export function Pumpkin({ cues }) {
   const { size, position } = LAYOUT.pumpkin;
-  const material = useCharacter('pumpkin', { origin: manifest.pumpkin.flame, depth: 0.85, shade: 0.4, falloff: 3.2, sss: 1 });
+  const material = useCharacter('pumpkin', { origin: manifest.pumpkin.flame, depth: 1.15, shade: 0.4, falloff: 3.2, sss: 1 });
   const [ox, oy] = manifest.pumpkin.flame;
   const mesh = useRef();
   const light = useRef();
@@ -225,7 +225,7 @@ export function SmallGhost({ cues, side, reduced }) {
 export function Candle({ cues, which }) {
   const item = which === 'tall' ? LAYOUT.candleTall : LAYOUT.candleSmall;
   const flame = manifest.candle.flame;
-  const material = useCharacter('candle', { origin: flame, depth: 0.25, hideUnlit: true, shade: 0.55 });
+  const material = useCharacter('candle', { origin: flame, depth: 0.25, hideUnlit: true, candle: true, shade: 0.55 });
   const light = useRef();
   const seed = which === 'tall' ? 5.1 : 8.7;
 
@@ -237,7 +237,8 @@ export function Candle({ cues, which }) {
     u.uIgnite.value = c;
     u.uWarm.value = Math.max(warm, c);
     // in the dark the wax is barely there; the pumpkin's light reaches it first, then its own flame
-    u.uExposure.value = lerp(0.04 + 0.4 * warm, 1, c);
+    u.uLightIn.value = warm * flicker(clock.elapsedTime, 1.3); // the pumpkin's light on the wax
+    u.uExposure.value = 1;
     u.uOpacity.value = Math.min(1, cues.pumpkin.value.reveal * 1.6);
     u.uGlow.value = 2.4 * c;
     u.uFlicker.value = f;

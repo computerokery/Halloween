@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import Environment from './Environment.jsx';
+import Ignition from './Ignition.jsx';
 import { Candle, Foliage, GhostMain, Pumpkin, SmallGhost } from './Characters.jsx';
 import { FallingLeaves, LeafPile } from './Leaves.jsx';
 import { LENGTH } from './choreography.js';
@@ -40,6 +41,7 @@ export default function World({ cues, quality, reduced }) {
   return (
     <>
       <Environment cues={cues} quality={quality} reduced={reduced} />
+      <Ignition cues={cues} reduced={reduced} />
       <Foliage cues={cues} />
       <GhostMain cues={cues} reduced={reduced} />
       <SmallGhost cues={cues} side="left" reduced={reduced} />
