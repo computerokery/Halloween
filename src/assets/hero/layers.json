@@ -1,0 +1,56 @@
+{
+  "scene-back": {
+    "left": 0.0,
+    "top": 0.0,
+    "width": 100.0,
+    "height": 100.0
+  },
+  "ghost-main": {
+    "left": 33.125,
+    "top": 1.0135,
+    "width": 57.3958,
+    "height": 70.6081
+  },
+  "ghost-left": {
+    "left": 17.4306,
+    "top": 43.8814,
+    "width": 14.375,
+    "height": 16.2913
+  },
+  "ghost-right": {
+    "left": 84.3403,
+    "top": 56.9444,
+    "width": 12.5,
+    "height": 15.1652
+  },
+  "pumpkin": {
+    "left": 24.0626,
+    "top": 44.6695,
+    "width": 46.8245,
+    "height": 49.253
+  },
+  "pumpkin-face": {
+    "left": 24.0626,
+    "top": 44.6695,
+    "width": 46.8245,
+    "height": 49.253
+  },
+  "flame": {
+    "left": 47.311,
+    "top": 82.167
+  },
+  "eyes": {
+    "left": 47.311,
+    "top": 68.485
+  },
+  "emerge": {
+    "left": 47.311,
+    "top": 58.452
+  },
+  "base": {
+    "left": 47.639,
+    "top": 91.592
+  },
+  "pumpkin-width": 45.278,
+  "aspect": 1.081081
+}

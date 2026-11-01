@@ -1,0 +1,30 @@
+/* ==========================================================================
+   WebGL hero — the canvas covers the whole hero so the scene is only ever
+   bounded by the screen; the camera keeps the composition on the slot
+   (.scene--3d, an empty placeholder in the layout — see ViewFit).
+   ========================================================================== */
+
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scene--3d {
+  transform: none;
+  visibility: hidden;
+}
+
+.scene--3d::before {
+  display: none;
+}
+
+.scene3d {
+  position: absolute;
+  inset: 0;
+}
+
+.scene3d canvas {
+  display: block;
+}

@@ -1,0 +1,182 @@
+/* ==========================================================================
+   Atmosphere — particles (from 0.1s), smoke (1.5s), falling leaves (1.8s)
+   ========================================================================== */
+
+/* ---------- particles ---------- */
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translate3d(calc(var(--mx) * -5px), calc(var(--my) * -4px), 0);
+  animation: intro-fade calc(1s * var(--tempo) + 0.3s) ease-out calc(0.1s * var(--tempo)) both;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent-light);
+  box-shadow: 0 0 6px 1px rgba(255, 146, 48, 0.55);
+  opacity: 0;
+  animation: particle-rise var(--dur) linear var(--delay) infinite;
+}
+
+@keyframes particle-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    opacity: var(--o);
+  }
+  75% {
+    opacity: calc(var(--o) * 0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--dx), var(--rise), 0);
+  }
+}
+
+/* ---------- falling leaves ---------- */
+
+.leaves {
+  position: absolute;
+  inset: -6% 0 4%;
+  pointer-events: none;
+  transform: translate3d(calc(var(--mx) * -18px), calc(var(--my) * -10px), 0);
+}
+
+.leaf {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.leaf--far {
+  opacity: 0.55;
+  filter: blur(1.2px);
+}
+
+.leaf__fall {
+  display: block;
+  height: 100%;
+  animation: leaf-fall var(--dur) linear calc(1.8s * var(--tempo) + var(--delay)) infinite both;
+}
+
+.leaf__sway {
+  display: block;
+  animation: leaf-sway calc(var(--dur) / 2.6) var(--ease-in-out) calc(var(--delay) * -1) infinite alternate;
+}
+
+.leaf__img {
+  width: 100%;
+  height: auto;
+  animation: leaf-spin calc(var(--dur) * 1.4) linear infinite;
+}
+
+@keyframes leaf-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  10% {
+    opacity: 0.95;
+  }
+  82% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+@keyframes leaf-sway {
+  from {
+    transform: translate3d(calc(var(--sway) * -1), 0, 0) rotate(-16deg);
+  }
+  to {
+    transform: translate3d(var(--sway), 0, 0) rotate(20deg);
+  }
+}
+
+@keyframes leaf-spin {
+  to {
+    transform: rotate(calc(360deg * var(--spin)));
+  }
+}
+
+/* ---------- smoke ---------- */
+
+.smoke {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: intro-fade calc(1.6s * var(--tempo) + 0.3s) ease-out calc(1.5s * var(--tempo)) both;
+}
+
+.smoke--back {
+  transform: translate3d(calc(var(--mx) * -4px), 0, 0);
+}
+
+.smoke__blob {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(185, 169, 154, 0.11), rgba(185, 169, 154, 0.04) 60%, transparent);
+  filter: blur(22px);
+  animation: smoke-drift var(--sdur) var(--ease-in-out) infinite alternate;
+}
+
+.smoke__blob--a {
+  left: 12%;
+  bottom: 4%;
+  width: 44%;
+  height: 26%;
+  --sdur: 14s;
+}
+
+.smoke__blob--b {
+  left: 46%;
+  bottom: 10%;
+  width: 40%;
+  height: 22%;
+  --sdur: 11.5s;
+  animation-direction: alternate-reverse;
+}
+
+.smoke__blob--c {
+  left: 4%;
+  bottom: -6%;
+  width: 92%;
+  height: 20%;
+  opacity: 0.75;
+  --sdur: 13s;
+  animation-delay: -5s;
+}
+
+@keyframes smoke-drift {
+  from {
+    transform: translate3d(-6%, 0, 0) scale(1);
+    opacity: 0.65;
+  }
+  to {
+    transform: translate3d(8%, -8%, 0) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaves {
+    display: none;
+  }
+
+  .particle {
+    animation: none;
+    opacity: calc(var(--o) * 0.4);
+  }
+
+  .smoke__blob {
+    animation: none;
+  }
+}

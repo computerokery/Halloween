@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Scroll story overlay (desktop + WebGL only). Beats start hidden; GSAP
+   (useHeroScroll) scrubs them in and out against the camera.
+   ========================================================================== */
+
+.story {
+  display: none;
+}
+
+@media (min-width: 1200px) and (prefers-reduced-motion: no-preference) {
+  .hero--3d .story {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+  }
+}
+
+.story__shade {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.story__shade--ritual {
+  background: linear-gradient(90deg, rgba(8, 7, 6, 0.92) 0%, rgba(8, 7, 6, 0.78) 26%, rgba(8, 7, 6, 0.3) 46%, transparent 60%);
+}
+
+.story__shade--guests {
+  background: linear-gradient(270deg, rgba(8, 7, 6, 0.92) 0%, rgba(8, 7, 6, 0.78) 26%, rgba(8, 7, 6, 0.3) 46%, transparent 60%);
+}
+
+.story__shade--night {
+  background: radial-gradient(ellipse 60% 70% at 0% 100%, rgba(8, 7, 6, 0.92), rgba(8, 7, 6, 0.6) 45%, transparent 75%);
+}
+
+.story__beat {
+  position: absolute;
+  max-width: 440px;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.story__beat--ritual {
+  left: max(var(--gutter), calc(50% - 640px));
+  top: 34%;
+}
+
+.story__beat--guests {
+  right: max(var(--gutter), calc(50% - 640px));
+  top: 30%;
+  text-align: right;
+}
+
+.story__beat--guests .story__text {
+  margin-left: auto;
+}
+
+.story__beat--night {
+  left: max(var(--gutter), calc(50% - 640px));
+  bottom: 12%;
+}
+
+/* Type follows the first screen: white = the "MIDNIGHT IS" headline face (Manrope Light,
+   uppercase), orange = the "CALLING" accent (Bodoni Moda italic with its warm gradient). */
+
+.story__label {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 500;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 11;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--accent-light);
+  text-shadow: 0 1px 14px rgba(8, 7, 6, 0.9);
+}
+
+.story__title,
+.story__finale-title {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-shadow: 0 2px 4px rgba(8, 7, 6, 0.6), 0 2px 30px rgba(8, 7, 6, 0.85);
+}
+
+.story__title {
+  margin-top: 14px;
+  font-size: var(--fs-h2);
+  line-height: 1.02;
+}
+
+.story__title em,
+.story__finale-title em {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 11;
+  letter-spacing: -0.035em;
+  /* the italic overhangs its box: pad so the gradient covers it, margins keep the layout */
+  padding: 0 0.22em 0.08em 0.14em;
+  margin: 0 -0.16em -0.08em -0.14em;
+  background: linear-gradient(100deg, var(--accent-primary) 0%, #f0904a 55%, var(--accent-light) 110%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* a text-shadow would show through the transparent glyphs; drop-shadow sits behind them */
+  text-shadow: none;
+  filter: drop-shadow(0 2px 14px rgba(8, 7, 6, 0.85));
+}
+
+.story__text {
+  margin-top: 20px;
+  max-width: 340px;
+  font-size: var(--fs-body-lg);
+  line-height: 1.55;
+  color: rgba(245, 235, 221, 0.86);
+  text-shadow: 0 1px 2px rgba(8, 7, 6, 0.8), 0 0 24px rgba(8, 7, 6, 0.9);
+}
+
+/* finale: the invitation, inside the pumpkin's glow */
+.story__finale {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.story__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 48% 42% at 50% 50%, rgba(22, 9, 3, 0.84), rgba(22, 9, 3, 0.5) 60%, rgba(22, 9, 3, 0.18) 100%),
+    linear-gradient(180deg, rgba(8, 7, 6, 0.55), transparent 30%, transparent 70%, rgba(8, 7, 6, 0.6));
+}
+
+.story__finale-inner {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.story__finale-title {
+  margin-top: 18px;
+  font-size: var(--fs-h1);
+  line-height: 0.96;
+}
+
+.story__actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.story__finale.is-active {
+  pointer-events: auto;
+}

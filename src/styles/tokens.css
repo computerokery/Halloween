@@ -1,0 +1,78 @@
+/* ==========================================================================
+   THE MIDNIGHT CLUB — design tokens
+   Single source of truth for colour, type, spacing and motion.
+   ========================================================================== */
+
+:root {
+  /* Colour */
+  --bg-primary: #080706;
+  --bg-secondary: #100c09;
+  --bg-card: #19120e;
+  --bg-hover: #241810;
+
+  --accent-primary: #e97820;
+  --accent-light: #ffb45c;
+  --accent-dark: #a94d17;
+
+  --text-primary: #f5ebdd;
+  --text-secondary: #b9a99a;
+  --text-muted: #786b60;
+
+  --border-color: #3a281c;
+  --glow-color: rgba(255, 132, 35, 0.35);
+
+  /* Type families */
+  --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --font-ui: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Type scale (desktop) */
+  --fs-h1: 88px;
+  --fs-h2: 56px;
+  --fs-h3: 36px;
+  --fs-h4: 24px;
+  --fs-body-lg: 18px;
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-caption: 12px;
+
+  /* Layout */
+  --container: 1280px;
+  --gutter: 80px;
+  --grid-gap: 24px;
+  --header-h: 96px;
+
+  /* Controls */
+  --btn-h: 52px;
+  --btn-px: 28px;
+  --radius: 8px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 220ms;
+  --dur-base: 420ms;
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --fs-h1: 72px;
+    --fs-h2: 46px;
+    --fs-h3: 30px;
+    --gutter: 48px;
+    --header-h: 84px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --fs-h1: clamp(46px, 13.4vw, 60px);
+    --fs-h2: 36px;
+    --fs-h3: 26px;
+    --fs-h4: 20px;
+    --fs-body-lg: 16px;
+    --gutter: 20px;
+    --header-h: 72px;
+    --btn-h: 50px;
+    --btn-px: 22px;
+  }
+}

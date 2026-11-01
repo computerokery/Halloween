@@ -1,0 +1,52 @@
+/* ==========================================================================
+   Motion system
+   - The entrance timeline is plain CSS (animation-delay on each element).
+   - Everything is paused while .page[data-intro='pending'] (assets loading),
+     then released at once so all delays share the same t = 0.
+   - Reduced motion: --tempo compresses the timeline, --travel removes movement.
+   ========================================================================== */
+
+.page {
+  --tempo: 1;
+  --travel: 1;
+}
+
+.page[data-intro='pending'] *,
+.page[data-intro='pending'] *::before,
+.page[data-intro='pending'] *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    --tempo: 0.12;
+    --travel: 0;
+  }
+}
+
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--rise, 18px) * var(--travel)), 0);
+  }
+}
+
+@keyframes intro-word {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(0.6em * var(--travel)), 0);
+  }
+}
+
+@keyframes intro-draw {
+  from {
+    transform: scaleX(calc(1 - var(--travel)));
+    opacity: calc(1 - var(--travel));
+  }
+}

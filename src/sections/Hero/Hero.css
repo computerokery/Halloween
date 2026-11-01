@@ -1,0 +1,285 @@
+/* ==========================================================================
+   Hero — layout (1440 × 810 reference). Typography is revealed by GSAP
+   (src/hooks/useIntroText.js), synced to the 3D intro.
+   ========================================================================== */
+
+.hero {
+  --hero-h: clamp(720px, 100svh, 1080px);
+  --mx: 0;
+  --my: 0;
+  position: relative;
+  height: var(--hero-h);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg-primary);
+}
+
+/* ---------- backdrop (stage 1) ---------- */
+
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__ambient {
+  position: absolute;
+  inset: 0;
+  /* floor bounce light; the halo around the characters lives on .scene */
+  background: radial-gradient(ellipse 52% 22% at 47.6% 100%, rgba(233, 120, 32, 0.09), transparent 75%);
+  animation: intro-fade calc(0.8s * var(--tempo) + 0.3s) ease-out 0s both;
+}
+
+/* ---------- grid ---------- */
+
+.hero__layout {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: 1fr auto;
+  column-gap: var(--grid-gap);
+  padding-top: var(--header-h);
+}
+
+.hero__intro {
+  grid-column: 1 / span 5;
+  grid-row: 1;
+  align-self: start;
+  padding-top: calc(var(--hero-h) * 0.13);
+  position: relative;
+  z-index: 3;
+}
+
+.hero__aside {
+  grid-column: 10 / -1;
+  grid-row: 1;
+  align-self: start;
+  padding-top: calc(var(--hero-h) * 0.13 + 24px);
+  position: relative;
+  z-index: 3;
+}
+
+.hero__meta {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  padding-block: 34px clamp(56px, 9svh, 80px);
+}
+
+/* ---------- headline ---------- */
+
+.hero__title {
+  font-family: var(--font-ui);
+  font-size: var(--fs-h1);
+  font-weight: 300;
+  line-height: 0.96;
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.hero__line {
+  display: block;
+  /* reveal mask, widened so the italic overhang is never clipped */
+  clip-path: inset(-0.2em -0.4em -0.15em -0.4em);
+  padding-bottom: 0.04em;
+}
+
+.hero__word {
+  display: inline-block;
+}
+
+/* SplitText chars */
+.hero__title .char {
+  display: inline-block;
+  will-change: transform;
+}
+
+.hero__word--accent {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  /* low optical size = the robust, lower-contrast cut seen in the design */
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 11;
+  letter-spacing: -0.035em;
+  /* the italic glyphs overhang their box; pad the box so the gradient (clipped to the
+     text) covers the overhang, and pull the margins back so layout is unchanged */
+  padding: 0 0.22em 0.08em 0.14em;
+  margin: 0 -0.16em -0.08em -0.14em;
+  /* 300% wide: the middle third holds a band of light that sweeps through the word;
+     at rest (100%) the visible third is the warm orange → amber of the design */
+  background: linear-gradient(100deg, var(--accent-primary) 0%, #f0904a 30%, #ffd9a8 45%, #fff4e2 50%,
+      #ffd9a8 55%, var(--accent-primary) 68%, #f0904a 85%, var(--accent-light) 108%);
+  background-size: 300% 100%;
+  background-position: 100% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__label {
+  margin-top: 26px;
+}
+
+/* ---------- aside ---------- */
+
+.hero__copy {
+  max-width: 330px;
+  font-size: var(--fs-body-lg);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.hero__actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.hero__btn {
+  --btn-h: 58px;
+  --btn-px: 20px;
+  gap: 12px;
+  font-size: 13px;
+}
+
+/* ---------- meta row ---------- */
+
+.hero__details {
+  display: flex;
+  margin: 0;
+  margin-top: 4px;
+}
+
+.hero__details .info-item {
+  padding-inline: 0 32px;
+}
+
+.hero__details .info-item + .info-item {
+  padding-inline: 32px 0;
+  border-left: 1px solid rgba(185, 169, 154, 0.28);
+}
+
+/* ==========================================================================
+   Tablet 768–1199: headline + copy on top, scene centre stage, meta below
+   ========================================================================== */
+
+@media (max-width: 1199px) {
+  .hero {
+    height: auto;
+    --hero-h: 860px;
+  }
+
+  .hero__ambient {
+    display: none;
+  }
+
+  .hero__layout {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
+    padding-top: calc(var(--header-h) + 56px);
+  }
+
+  .hero__intro {
+    grid-column: 1 / span 5;
+    padding-top: 0;
+  }
+
+  .hero__aside {
+    grid-column: 6 / -1;
+    padding-top: 6px;
+  }
+
+  .hero__copy {
+    font-size: var(--fs-body);
+  }
+
+  .hero__actions {
+    flex-wrap: wrap;
+    margin-top: 32px;
+    gap: 12px;
+  }
+
+  .hero__btn {
+    --btn-h: 52px;
+    --btn-px: 18px;
+  }
+
+  .hero__meta {
+    grid-row: 3;
+    padding-block: 32px 56px;
+  }
+}
+
+/* ==========================================================================
+   Mobile < 768: single column story — headline, scene, copy, details
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .hero__layout {
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(var(--header-h) + 28px);
+  }
+
+  .hero__title {
+    line-height: 1;
+  }
+
+  .hero__label {
+    margin-top: 24px;
+  }
+
+  .hero__aside {
+    padding-top: 0;
+    margin-top: 8px;
+  }
+
+  .hero__copy {
+    max-width: 36ch;
+    font-size: var(--fs-body);
+  }
+
+  .hero__actions {
+    margin-top: 28px;
+    flex-wrap: nowrap;
+  }
+
+  .hero__btn {
+    flex: 1 1 0;
+    --btn-h: 52px;
+    --btn-px: 14px;
+    gap: 10px;
+  }
+
+  .hero__meta {
+    flex-direction: column;
+    gap: 28px;
+    margin-top: 44px;
+    padding-block: 28px 48px;
+  }
+
+  .hero__details {
+    width: 100%;
+  }
+
+  .hero__details .info-item {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 359px) {
+  .hero__actions {
+    flex-direction: column;
+  }
+}
